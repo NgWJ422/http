@@ -1,4 +1,5 @@
-const express = require('express')
+const jwt = require('jsonwebtoken');
+const express = require('express');
 const app = express()
 const port = 3000
 
@@ -54,22 +55,25 @@ app.post('/', (req, res) => {
   });
 });
 
-app.get('/', (req, res) => {
+app.get('/hello', verifytoken,(req, res) => {
+  console.log(req.user)
   res.send('Hello World!')
 })
 
 
 app.post('/login',(req,res) =>{
   const{username, password}=req.body;
+  let user=login(username,password)
+  res.send(generatetoken(user))
+  //const user = dbuser.find(user => user.username === username && user.password === password);
 
-  const user = dbuser.find(user => user.username === username && user.password === password);
-
-  if(user){
-    res.send(user);
-  }else{
-    res.send({error:"user not found"});
+  //if(user){
+  //  res.send(user);
+  //}else{
+   // res.send({error:"user not found"});
   }
-})
+//}
+)
 
 app.post('/register',(req,res)=>{
   let data=req.body
@@ -129,4 +133,25 @@ function register(newusername,newpassword,newname,newemail){
 
   
 }
+}
+
+function generatetoken(userprofile){
+  return jwt.sign(
+    userprofile,
+    'secret',
+    {expiresIn:60*60});
+}
+
+//verify the token
+function verifytoken(req, res, next){
+  let header= req.headers.authorization
+  console.log(header)
+  let token=header.split(' ')[1]
+  jwt.verify(token,'secret',function(err,decoded){
+    if(err){
+      res.send("invalid token")
+    }
+    console.log(decoded)
+    next()
+  });
 }
