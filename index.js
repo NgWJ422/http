@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const express = require('express');
+const mongoose = require('mongoose')
 const app = express()
 const port = 3000
 
@@ -27,7 +28,7 @@ async function run() {
     await client.close();
   }
 }
-run().catch(console.dir);
+//run().catch(console.dir);
 
 let dbuser =[
   {
@@ -177,7 +178,32 @@ function verifytoken(req, res, next){
     if(err){
       res.send("invalid token")
     }
+    req.user=decoded
     console.log(decoded)
     next()
   });
 }
+
+app.post('/visitor',verifyToken,(req,res)=>{
+   if(req.user.role == 'user'){
+    //insertone to database
+    insertOne{
+      name:req.body.name,
+      purpose:req.body.purpose,
+      date:req.body.date,
+      user:req.user.username
+    }
+    
+
+    }
+   
+})
+
+app.get('/visitor',verifyToken,(req,res)=>{
+  if(req.user.role == 'security'){
+    find({date: {$eq: new Date()}})
+  }
+  if(req.user.role == 'user'){
+    find({username:{$eq:req.user.username}})
+  }
+})

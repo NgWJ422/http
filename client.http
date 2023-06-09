@@ -27,3 +27,14 @@ Content-Type: application/json
     "name": "uuuu",
     "email":"user@m.com"
 }
+
+###
+
+POST http://localhost:3000/visitor
+Content-Type: application/json
+
+{
+    "user": "1",
+    "purpose": "uuuu",
+    "date":"uuu"
+}
